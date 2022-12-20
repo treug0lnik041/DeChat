@@ -24,3 +24,24 @@ pub struct CreateMessagePool<'info> {
     pub message_pool: Account<'info, MessagePool>,
     pub system_program: Program<'info, System>,
 }
+
+#[derive(Accounts)]
+pub struct GetMessagePool<'info> {
+	pub payer: Signer<'info>,
+	/// CHECK: key for getting PDA account (must be program id)
+    pub user2: UncheckedAccount<'info>,
+    #[account(
+		mut,
+		seeds = [&user2.key().to_bytes(), payer.key().as_ref()],
+		bump = message_pool.bump
+	)]
+    pub message_pool: Account<'info, MessagePool>,
+}
+
+impl MessagePool {
+	pub fn send_message(&mut self, message_text: String) -> Result<()> {
+		let message = Message::new(message_text);
+		self.messages.push(message);
+		Ok(())
+	}
+}

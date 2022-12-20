@@ -2,7 +2,7 @@ import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
 import { DeChat } from "../target/types/de_chat";
 import { publicKey } from "@project-serum/anchor/dist/cjs/utils";
-import { assert } from "chai";
+import { assert, expect } from "chai";
 
 describe("DeChat", () => {
   // Configure the client to use the local cluster.
@@ -77,4 +77,26 @@ describe("DeChat", () => {
       messagePool: messagePool,
     }).rpc();
   });
+
+  it("send messages", async () => {
+    const user2 = anchor.web3.Keypair.generate();
+    const messagePool = await getMessagePool(provider.wallet.publicKey, user2.publicKey, program.programId);
+
+    await program.methods.createMessagePool().accounts({
+      payer: provider.wallet.publicKey,
+      user2: user2.publicKey,
+      messagePool: messagePool,
+    }).rpc();
+
+    for (let i = 0; i < 10; i++) {
+      await program.methods.sendMessage(i.toString()).accounts({
+        payer: provider.wallet.publicKey,
+        user2: user2.publicKey,
+        messagePool: messagePool,
+      }).rpc();
+    }
+
+    const pool = await program.account.messagePool.fetch(messagePool);
+    expect(pool.messages[9].text).to.equal("9");
+  })
 });

@@ -56,4 +56,8 @@ pub mod de_chat {
 
         Ok(())
     }
+
+    pub fn send_message(ctx: Context<GetMessagePool>, message_text: String) -> Result<()> {
+        return ctx.accounts.message_pool.send_message(message_text);
+    }
 }
