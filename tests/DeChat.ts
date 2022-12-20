@@ -11,7 +11,7 @@ describe("DeChat", () => {
 
   const program = anchor.workspace.DeChat as Program<DeChat>;
 
-  it("userpool", async () => {
+  it("UserPool", async () => {
     // Get userpool PDA
     const [userPool, _] = await publicKey.findProgramAddressSync([
       anchor.utils.bytes.utf8.encode("user-pool"),
@@ -56,5 +56,25 @@ describe("DeChat", () => {
     }).view();
 
     assert(pubkey.toString() == provider.wallet.publicKey.toString(), "Public key is wrong");
-  })
+  });
+
+  async function getMessagePool(payer: anchor.web3.PublicKey, user2: anchor.web3.PublicKey, programId: anchor.web3.PublicKey) {
+    const [messagePool, _] = await publicKey.findProgramAddressSync([
+      user2.toBuffer(),
+      provider.wallet.publicKey.toBuffer()
+    ], programId);
+
+    return messagePool;
+  }
+
+  it("MessagePool", async () => {
+    const user2 = anchor.web3.Keypair.generate();
+    const messagePool = await getMessagePool(provider.wallet.publicKey, user2.publicKey, program.programId);
+
+    await program.methods.createMessagePool().accounts({
+      payer: provider.wallet.publicKey,
+      user2: user2.publicKey,
+      messagePool: messagePool,
+    }).rpc();
+  });
 });
