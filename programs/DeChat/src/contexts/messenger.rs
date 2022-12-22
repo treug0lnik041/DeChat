@@ -11,14 +11,17 @@ pub struct MessagePool {
 pub struct CreateMessagePool<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
-    /// CHECK: user2 key need to create PDA
-    pub user2: UncheckedAccount<'info>,
+
+	/// CHECK: sender key for creating PDA account
+	pub sender: UncheckedAccount<'info>,
+    /// CHECK: receiver key for creating PDA account
+    pub receiver: UncheckedAccount<'info>,
     /// Use all space for grow userpool
     #[account(
 		init,
 		payer = payer,
 		space = 10240,
-		seeds = [&user2.key().to_bytes(), payer.key().as_ref()],
+		seeds = [&receiver.key().to_bytes(), sender.key().as_ref()],
 		bump
 	)]
     pub message_pool: Account<'info, MessagePool>,
@@ -26,13 +29,27 @@ pub struct CreateMessagePool<'info> {
 }
 
 #[derive(Accounts)]
+pub struct ViewMessagePool<'info> {
+	/// CHECK: sender key for getting PDA account
+	pub sender: UncheckedAccount<'info>,
+	/// CHECK: receiver key for getting PDA account 
+    pub receiver: UncheckedAccount<'info>,
+    #[account(
+		seeds = [&receiver.key().to_bytes(), sender.key().as_ref()],
+		bump = message_pool.bump
+	)]
+    pub message_pool: Account<'info, MessagePool>,
+}
+
+#[derive(Accounts)]
 pub struct GetMessagePool<'info> {
-	pub payer: Signer<'info>,
-	/// CHECK: key for getting PDA account (must be program id)
-    pub user2: UncheckedAccount<'info>,
+	/// CHECK: sender key for getting PDA account
+	pub sender: UncheckedAccount<'info>,
+	/// CHECK: receiver key for getting PDA account 
+    pub receiver: UncheckedAccount<'info>,
     #[account(
 		mut,
-		seeds = [&user2.key().to_bytes(), payer.key().as_ref()],
+		seeds = [&receiver.key().to_bytes(), sender.key().as_ref()],
 		bump = message_pool.bump
 	)]
     pub message_pool: Account<'info, MessagePool>,
@@ -42,6 +59,16 @@ impl MessagePool {
 	pub fn send_message(&mut self, message_text: String) -> Result<()> {
 		let message = Message::new(message_text);
 		self.messages.push(message);
+		Ok(())
+	}
+
+	pub fn receive_messages(&self) -> Result<Vec<Message>> {
+		let vec = self.messages.clone();
+		return Ok(vec);
+	}
+
+	pub fn clear_messages(&mut self) -> Result<()> {
+		self.messages.clear();
 		Ok(())
 	}
 }
