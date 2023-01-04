@@ -1,7 +1,7 @@
 .header {
 	background-color: #222222;
 	color: #ffffff;
-	height: 7vh;
+	height: 6vh;
 	min-height: 50px;
 	position: fixed;
 	width: 100%;
@@ -12,6 +12,16 @@
 	z-index: 99;
 	padding: 10px;
 	box-sizing: border-box;
+}
+
+.dechat {
+	font: inherit bold;
+	margin-right: 15px;
+	color: white;
+	background-color: rgba(0, 0, 0, 0);
+	border: 0;
+	cursor: pointer;
+	text-decoration: none;
 }
 
 .accbtn {

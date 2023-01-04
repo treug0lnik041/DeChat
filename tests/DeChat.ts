@@ -59,34 +59,19 @@ describe("DeChat", () => {
     assert(pubkey.toString() == provider.wallet.publicKey.toString(), "Public key is wrong");
   });
 
-  async function createMessagePool(sender: PublicKey | anchor.web3.Keypair, receiver: PublicKey) {
-    if (sender instanceof PublicKey) {
-      const [messagePool, _] = await publicKey.findProgramAddressSync([
-        receiver.toBuffer(),
-        sender.toBuffer()
-      ], program.programId);
+  async function createMessagePool(sender: PublicKey, receiver: PublicKey) {
+    const [messagePool, _] = await publicKey.findProgramAddressSync([
+      receiver.toBuffer(),
+      sender.toBuffer()
+    ], program.programId);
   
-      await program.methods.createMessagePool().accounts({
-        sender,
-        receiver,
-        messagePool,
-      }).rpc();
+    await program.methods.createMessagePool().accounts({
+      sender,
+      receiver,
+      messagePool,
+    }).rpc();
 
-      return messagePool;
-    } else {
-      const [messagePool, _] = await publicKey.findProgramAddressSync([
-        receiver.toBuffer(),
-        sender.publicKey.toBuffer()
-      ], program.programId);
-
-      await program.methods.createMessagePool().accounts({
-        sender: sender.publicKey,
-        receiver,
-        messagePool
-      }).signers([sender]).rpc();
-
-      return messagePool;
-    }
+    return messagePool;
   }
 
   it("MessagePool", async () => {

@@ -1,0 +1,19 @@
+.dialog {
+	background-color: #373737;
+	cursor: pointer;
+	display: block;
+	position: relative;
+	border-radius: 10px;
+	height: fit-content;
+	padding-left: 10px;
+	text-align: left;
+}
+
+.username {
+	padding-top: 7px;
+}
+
+.lastMessage {
+	padding-bottom: 7px;
+	color: #8a8787;
+}

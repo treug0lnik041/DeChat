@@ -7,31 +7,30 @@ import Header from "./components/Header/Header";
 import Login from "./pages/Login";
 import Messenger from "./pages/Messenger";
 import NotFound from "./pages/NotFound";
+import { AuthContext } from "./context";
 
 function App() {
-	let [isLoggined, setLoginState] = useState(false); 
-
-	/*
-	useEffect(() => {
-		if (localStorage.getItem('wallet_id) && localStorage.getItem('private_key))
-			setLoginState(true);
-	}. []);
-	*/
+	const [walletProvider, setWalletProvider] = useState(null);
 
 	return (
 		<div className="App">
-			<BrowserRouter>
-				<Header isLoggined={isLoggined}/>
+			<AuthContext.Provider value={{
+				walletProvider : walletProvider,
+				setWalletProvider : setWalletProvider
+			}}>
+				<BrowserRouter>
+					<Header/>
 				
-					<main>
-					<Routes>
-						<Route path="/login" element={<Login setLoginState={setLoginState}/>}/>
-						<Route path="/messenger" element={<Messenger/>}/>
-						<Route path="/404notfound" element={<NotFound/>}/>
-						<Route path="*" element={<NotFound/>}/>
-					</Routes>
-					</main>
-			</BrowserRouter>
+						<main>
+						<Routes>
+							<Route path="/" element={ walletProvider ? <Messenger/> : <Login/> }/>
+							<Route path="/login" element={<Login/>}/>
+							<Route path="/messenger" element={walletProvider ? <Messenger/> : <Login/>}/>
+							<Route path="*" element={<NotFound/>}/>
+						</Routes>
+						</main>
+				</BrowserRouter>
+			</AuthContext.Provider>
 		</div>
 	);
 }

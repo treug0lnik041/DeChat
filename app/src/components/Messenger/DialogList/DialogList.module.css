@@ -1,0 +1,12 @@
+.dialog__list {
+	display: block;
+	align-items: top;
+	word-wrap: break-word;
+	
+	position: relative;
+	padding: 0.5%;
+	border-radius: 10px;
+	margin: 1vh;
+	width: 30%;
+	background-color: #222222;
+}

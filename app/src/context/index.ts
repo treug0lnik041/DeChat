@@ -1,16 +1,5 @@
 import { createContext } from "react";
 
-export const AuthContext = createContext(null);
+import Program from "../program-sdk/Program";
 
-/*
-const [isAuth, setIsAuth] = useState(false);
-<AuthContext.Provider value={{
-	isAuth,
-	setIsAuth
-}}/>
-
-=========================
-
-const {isAuth, setIsAuth} = useContext(AuthContext);
-
-*/
+export const AuthContext = createContext<any>(null);
